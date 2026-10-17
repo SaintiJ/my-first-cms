@@ -1,4 +1,4 @@
-<?php include "templates/include/header.php" ?>
+<?php /** @var array $results */ include "templates/include/header.php" ?>
 <?php include "templates/admin/include/header.php" ?>
 	  
     <h1>All Articles</h1>

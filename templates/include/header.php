@@ -1,3 +1,4 @@
+<?php /** @var array $results */ ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
