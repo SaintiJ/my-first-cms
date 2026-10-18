@@ -1,5 +1,6 @@
 
-<?php /** @var array $results */ include "templates/include/header.php" ?>
+<?php /** @var array $results */ ?>
+<?php include "templates/include/header.php" ?>
     <ul id="headlines">
     <?php foreach ($results['articles'] as $article) { ?>
         <li class='<?php echo $article->id?>'>

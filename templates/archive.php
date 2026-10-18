@@ -1,4 +1,5 @@
-<?php /** @var array $results */ include "templates/include/header.php" ?>
+<?php /** @var array $results */ ?>
+<?php include "templates/include/header.php" ?>
 	  
     <h1><?php echo htmlspecialchars( $results['pageHeading'] ) ?></h1>
     

@@ -1,4 +1,5 @@
-<?php /** @var array $results */ include "templates/include/header.php" ?>
+<?php /** @var array $results */ ?>
+<?php include "templates/include/header.php" ?>
 	  
     <form action="admin.php?action=login" method="post" style="width: 50%;">
         <input type="hidden" name="login" value="true" />

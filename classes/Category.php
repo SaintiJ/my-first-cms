@@ -36,10 +36,17 @@ class Category
       if ( isset( $data['description'] ) ) $this->description = preg_replace ( "/[^\.\,\-\_\'\"\@\?\!\:\$ a-zA-Z0-9()]/", "", $data['description'] );
     }*/
 
-    public function __construct( $data=array() ) {
-      if ( isset( $data['id'] ) ) $this->id = (int) $data['id'];
-      if ( isset( $data['name'] ) ) $this->name = $data['name'];
-      if ( isset( $data['description'] ) ) $this->description = $data['description'];
+    public function __construct($data = array())
+    {
+        if (isset($data['id'])) {
+            $this->id = (int) $data['id'];
+        }
+        if (isset($data['name'])) {
+            $this->name = $data['name'];
+        }
+        if (isset($data['description'])) {
+            $this->description = $data['description'];
+        }
     }
 
     /**
@@ -48,10 +55,10 @@ class Category
     * @param assoc Значения из формы редактирования
     */
 
-    public function storeFormValues ( $params ) {
-
-      // Store all the parameters
-      $this->__construct( $params );
+    public function storeFormValues($params)
+    {
+        // Store all the parameters
+        $this->__construct($params);
     }
 
 
@@ -62,17 +69,18 @@ class Category
     * @return Category|false Объект Category object или false, если запись не была найдена или в случае другой ошибки
     */
 
-    public static function getById( $id ) 
+    public static function getById($id)
     {
-        $conn = new PDO( CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password );
+        $conn = new PDO(CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password);
         $sql = "SELECT * FROM categories WHERE id = :id";
-        $st = $conn->prepare( $sql );
+        $st = $conn->prepare($sql);
         $st->bindValue(":id", $id, PDO::PARAM_INT);
         $st->execute();
         $row = $st->fetch();
         $conn = null;
-        if ($row) 
+        if ($row) {
             return new Category($row);
+        }
     }
 
 
@@ -83,33 +91,33 @@ class Category
     * @param string Optional Столбец, по которому сортируются категории(по умолчанию = "name ASC")
     * @return Array|false Двух элементный массив: results => массив с объектами Category; totalRows => общее количество категорий
     */
-    public static function getList( $numRows=1000000, $order="name ASC" ) 
-    { 
-    $conn = new PDO( CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password);
-    //	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM categories
-    //	            ORDER BY " . mysql_escape_string($order) . " LIMIT :numRows";
+    public static function getList($numRows = 1000000, $order = "name ASC")
+    {
+        $conn = new PDO(CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password);
+        //        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM categories
+        //                ORDER BY " . mysql_escape_string($order) . " LIMIT :numRows";
 
-    //            $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM categories
-    //	            ORDER BY " .$conn->query($order) . " LIMIT :numRows";
-    $fromPart = "FROM categories";
-    $sql = "SELECT * $fromPart
+        //            $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM categories
+        //                ORDER BY " .$conn->query($order) . " LIMIT :numRows";
+        $fromPart = "FROM categories";
+        $sql = "SELECT * $fromPart
             ORDER BY $order LIMIT :numRows";
 
-    $st = $conn->prepare( $sql );
-    $st->bindValue( ":numRows", $numRows, PDO::PARAM_INT );
-    $st->execute();
-    $list = array();
+        $st = $conn->prepare($sql);
+        $st->bindValue(":numRows", $numRows, PDO::PARAM_INT);
+        $st->execute();
+        $list = array();
 
-    while ( $row = $st->fetch() ) {
-      $category = new Category( $row );
-      $list[] = $category;
-    }
+        while ($row = $st->fetch()) {
+            $category = new Category($row);
+            $list[] = $category;
+        }
 
-    // Получаем общее количество категорий, которые соответствуют критериям
-    $sql = "SELECT COUNT(*) AS totalRows $fromPart";
-    $totalRows = $conn->query( $sql )->fetch();
-    $conn = null;
-    return ( array ( "results" => $list, "totalRows" => $totalRows[0] ) );
+        // Получаем общее количество категорий, которые соответствуют критериям
+        $sql = "SELECT COUNT(*) AS totalRows $fromPart";
+        $totalRows = $conn->query($sql)->fetch();
+        $conn = null;
+        return array("results" => $list, "totalRows" => $totalRows[0]);
     }
 
 
@@ -117,20 +125,26 @@ class Category
     * Вставляем текущий объект Category в базу данных и устанавливаем его свойство ID.
     */
 
-    public function insert() {
+    public function insert()
+    {
+        // У объекта Category уже есть ID?
+        if (!is_null($this->id)) {
+            trigger_error(
+                "Category::insert(): Attempt to insert a Category object "
+                . "that already has its ID property set (to $this->id).",
+                E_USER_ERROR
+            );
+        }
 
-      // У объекта Category уже есть ID?
-      if ( !is_null( $this->id ) ) trigger_error ( "Category::insert(): Attempt to insert a Category object that already has its ID property set (to $this->id).", E_USER_ERROR );
-
-      // Вставляем категорию
-      $conn = new PDO( CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password );
-      $sql = "INSERT INTO categories ( name, description ) VALUES ( :name, :description )";
-      $st = $conn->prepare ( $sql );
-      $st->bindValue( ":name", $this->name, PDO::PARAM_STR );
-      $st->bindValue( ":description", $this->description, PDO::PARAM_STR );
-      $st->execute();
-      $this->id = $conn->lastInsertId();
-      $conn = null;
+        // Вставляем категорию
+        $conn = new PDO(CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password);
+        $sql = "INSERT INTO categories ( name, description ) VALUES ( :name, :description )";
+        $st = $conn->prepare($sql);
+        $st->bindValue(":name", $this->name, PDO::PARAM_STR);
+        $st->bindValue(":description", $this->description, PDO::PARAM_STR);
+        $st->execute();
+        $this->id = $conn->lastInsertId();
+        $conn = null;
     }
 
 
@@ -138,20 +152,26 @@ class Category
     * Обновляем текущий объект Category в базе данных.
     */
 
-    public function update() {
+    public function update()
+    {
+        // У объекта Category  есть ID?
+        if (is_null($this->id)) {
+            trigger_error(
+                "Category::update(): Attempt to update a Category object "
+                . "that does not have its ID property set.",
+                E_USER_ERROR
+            );
+        }
 
-      // У объекта Category  есть ID?
-      if ( is_null( $this->id ) ) trigger_error ( "Category::update(): Attempt to update a Category object that does not have its ID property set.", E_USER_ERROR );
-
-      // Обновляем категорию
-      $conn = new PDO( CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password );
-      $sql = "UPDATE categories SET name=:name, description=:description WHERE id = :id";
-      $st = $conn->prepare ( $sql );
-      $st->bindValue( ":name", $this->name, PDO::PARAM_STR );
-      $st->bindValue( ":description", $this->description, PDO::PARAM_STR );
-      $st->bindValue( ":id", $this->id, PDO::PARAM_INT );
-      $st->execute();
-      $conn = null;
+        // Обновляем категорию
+        $conn = new PDO(CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password);
+        $sql = "UPDATE categories SET name=:name, description=:description WHERE id = :id";
+        $st = $conn->prepare($sql);
+        $st->bindValue(":name", $this->name, PDO::PARAM_STR);
+        $st->bindValue(":description", $this->description, PDO::PARAM_STR);
+        $st->bindValue(":id", $this->id, PDO::PARAM_INT);
+        $st->execute();
+        $conn = null;
     }
 
 
@@ -159,20 +179,22 @@ class Category
     * Удаляем текущий объект Category из базы данных.
     */
 
-    public function delete() {
+    public function delete()
+    {
+        // У объекта Category  есть ID?
+        if (is_null($this->id)) {
+            trigger_error(
+                "Category::delete(): Attempt to delete a Category object "
+                . "that does not have its ID property set.",
+                E_USER_ERROR
+            );
+        }
 
-      // У объекта Category  есть ID?
-      if ( is_null( $this->id ) ) trigger_error ( "Category::delete(): Attempt to delete a Category object that does not have its ID property set.", E_USER_ERROR );
-
-      // Удаляем категорию
-      $conn = new PDO( CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password );
-      $st = $conn->prepare ( "DELETE FROM categories WHERE id = :id LIMIT 1" );
-      $st->bindValue( ":id", $this->id, PDO::PARAM_INT );
-      $st->execute();
-      $conn = null;
+        // Удаляем категорию
+        $conn = new PDO(CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password);
+        $st = $conn->prepare("DELETE FROM categories WHERE id = :id LIMIT 1");
+        $st->bindValue(":id", $this->id, PDO::PARAM_INT);
+        $st->execute();
+        $conn = null;
     }
-
 }
-	  
-	
-

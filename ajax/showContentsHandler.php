@@ -1,5 +1,5 @@
 <?php
-require ('../config.php');
+require('../config.php');
 
 if (isset($_GET['articleId'])) {
     $article = Article::getById((int)$_GET['articleId']);
@@ -11,7 +11,7 @@ if (isset ($_POST['articleId'])) {
     echo json_encode($article);
 //        die("Привет)");
 //    $conn = new PDO( CmsConfig::$CmsConfig::$db_dsn, CmsConfig::$db_username, CmsConfig::$db_password );
-//    
+//
 //        if (isset($conn)) {
 //            die("Соединенте установлено");
 //        }
@@ -27,4 +27,3 @@ if (isset ($_POST['articleId'])) {
 //    $conn = null;
 //    echo json_encode($result);
 }
-
