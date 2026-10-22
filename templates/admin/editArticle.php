@@ -29,9 +29,15 @@
 
               <li>
                 <label for="content">Article Content</label>
-                <textarea name="content" id="content" placeholder="The HTML content of the article" required maxlength="100000" style="height: 30em;">
-            <?php echo htmlspecialchars( $article ? $article->content : '' )?>
-              </textarea>
+                <!-- ИЗМЕНЕНО: убраны переносы строк внутри textarea, чтобы в базу не попадали невидимые пробелы -->
+                <textarea name="content" id="content" placeholder="The HTML content of the article" required maxlength="100000" style="height: 30em;"><?php echo htmlspecialchars( $article ? $article->content : '' )?></textarea>
+              </li>
+
+              <li>
+                <label for="active">Активна (показывать на сайте):</label>
+                <input type="hidden" name="active" value="0"> <!-- ИЗМЕНЕНО: скрытое поле для отправки 0 при снятой галочке -->
+                <input type="checkbox" name="active" id="active" value="1" 
+                  <?php echo (isset($article) && $article->active) ? 'checked' : ''; ?>> <!-- ИЗМЕНЕНО: проверка на active -->
               </li>
 
               <li>
@@ -67,5 +73,3 @@
     <?php } ?>
 	  
 <?php include "templates/include/footer.php" ?>
-
-              

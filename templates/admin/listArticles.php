@@ -18,6 +18,7 @@
               <th>Publication Date</th>
               <th>Article</th>
               <th>Category</th>
+              <th>Is_Active</th> <!-- ИЗМЕНЕНО
             </tr>
 
 <!--<?php echo "<pre>"; print_r ($results['articles'][2]->publicationDate); echo "</pre>"; ?> Обращаемся к дате массива $results. Дата = 0 -->
@@ -43,6 +44,7 @@
                 echo "Без категории";
                 }?>
               </td>
+              <td><?php echo $article->active ? 'Да' : 'Нет'; ?></td> <!-- вывод статуса активности -->
             </tr>
 
     <?php } ?>
@@ -53,4 +55,4 @@
 
           <p><a href="admin.php?action=newArticle">Add a New Article</a></p>
 
-<?php include "templates/include/footer.php" ?>              
+<?php include "templates/include/footer.php" ?>

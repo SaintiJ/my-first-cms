@@ -170,7 +170,7 @@ function listArticles()
 {
     $results = array();
 
-    $data = Article::getList();
+    $data = Article::getList(1000000, null, "publicationDate DESC", true); // ИЗМЕНЕНО
     $results['articles'] = $data['results'];
     $results['totalRows'] = $data['totalRows'];
 
